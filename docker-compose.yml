@@ -1,0 +1,12 @@
+services:
+  api-vagas-nortejs-mysql:
+    # bitnami é uma biblioteca de aplicativos com algumas configurações pré-definidas de segurança e desempenho.
+    image: bitnami/mysql:8.0
+    container_name: api-vagas-nortejs-mysql
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_DATABASE=vagas_nortejs
+      - MYSQL_USER=usernortejs
+      - MYSQL_PASSWORD=passwordnortejs
