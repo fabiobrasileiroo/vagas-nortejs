@@ -5,7 +5,6 @@ type MaybePromise<T> = T | Promise<T>;
 
 export async function GET(request: Request, { params }: { params: MaybePromise<JobParams> }) {
   const resolvedParams = await Promise.resolve(params);
-  console.log("🚀 ~ GET ~ params:", resolvedParams)
   if (!resolvedParams || !resolvedParams.id) {
     return new Response(JSON.stringify({ message: 'Missing job id' }), { status: 400 });
   }

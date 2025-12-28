@@ -59,6 +59,17 @@ export async function GET(request: Request) {
                     description: { type: 'string' },
                     requirements: { type: 'string' },
                   },
+                  example: {
+                    title: 'Desenvolvedor Backend',
+                    company: 'Amazon',
+                    company_website: 'https://amazon.com',
+                    city: 'Seattle',
+                    state: 'WA',
+                    schedule: 'full-time',
+                    salary: 8000,
+                    description: 'Estamos procurando um desenvolvedor backend com experiência em APIs e Node.js.',
+                    requirements: 'Experiência com Node.js, TypeScript e bancos relacionais.'
+                  }
                 },
               },
               'application/x-www-form-urlencoded': {

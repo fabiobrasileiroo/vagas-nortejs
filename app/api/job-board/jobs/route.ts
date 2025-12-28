@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/db';
 import { createJobSchema } from './schema-jobs';
+import { ZodError } from 'zod';
 import { PER_PAGE, buildLinks, currentPageFunction, lastPageFunction, parseListQuery, readBody, skipFunction, sleep, toFunction } from './jobs-utils';
 
 export async function GET(request: Request) {
@@ -67,7 +68,11 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ data: created }, { status: 201 });
   } catch (err: any) {
-    const message = err?.errors ? err.errors : err?.message || 'Validation error';
-    return NextResponse.json({ message }, { status: 422 });
+    if (err instanceof ZodError) {
+      return NextResponse.json({ errors: err.issues }, { status: 422 });
+    }
+
+    const message = err?.message || 'Internal error';
+    return NextResponse.json({ message }, { status: 500 });
   }
 }
