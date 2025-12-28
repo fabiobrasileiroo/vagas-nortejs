@@ -3,6 +3,7 @@ import prisma from '@/lib/db';
 import { createJobSchema } from './schema-jobs';
 import { ZodError } from 'zod';
 import { PER_PAGE, buildLinks, currentPageFunction, lastPageFunction, parseListQuery, readBody, skipFunction, sleep, toFunction } from './jobs-utils';
+import Error from 'next/error';
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
@@ -12,12 +13,12 @@ export async function GET(request: Request) {
 
   const where = search
     ? {
-        OR: [
-          { title: { contains: search, mode: 'insensitive' as const } },
-          { company: { contains: search, mode: 'insensitive' as const } },
-          { city: { contains: search, mode: 'insensitive' as const } },
-        ],
-      }
+      OR: [
+        { title: { contains: search, mode: 'insensitive' as const } },
+        { company: { contains: search, mode: 'insensitive' as const } },
+        { city: { contains: search, mode: 'insensitive' as const } },
+      ],
+    }
     : undefined;
 
   const total = await prisma.job.count({ where });
@@ -67,7 +68,7 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json({ data: created }, { status: 201 });
-  } catch (err: any) {
+  } catch (err: Error | any) {
     if (err instanceof ZodError) {
       return NextResponse.json({ errors: err.issues }, { status: 422 });
     }
