@@ -27,11 +27,37 @@ export async function DELETE(request: Request, context: { params: Promise<JobPar
   }
   const jobId = Number(resolvedParams.id);
 
-  const existing = await prisma.job.findUnique({ where: { id: jobId } });
-  if (!existing) {
-    return new Response(JSON.stringify({ message: 'Job not found' }), { status: 404 });
-  }
+  try {
+    const existing = await prisma.job.findUnique({ where: { id: jobId } });
+    if (!existing) {
+      return new Response(JSON.stringify({ message: 'Job not found' }), { status: 404 });
+    }
 
-  await prisma.job.delete({ where: { id: jobId } });
-  return new Response(null, { status: 204 });
+    // Evita erro de FK quando existem comentários (MySQL tende a RESTRICT por padrão)
+    await prisma.$transaction([
+      prisma.comment.deleteMany({ where: { jobId } }),
+      prisma.job.delete({ where: { id: jobId } }),
+    ]);
+
+    return new Response(null, { status: 204 });
+  } catch (err: any) {
+    // Prisma error codes: https://www.prisma.io/docs/orm/reference/error-reference
+    const code = err?.code as string | undefined;
+
+    // Record to delete does not exist (race condition)
+    if (code === 'P2025') {
+      return new Response(JSON.stringify({ message: 'Job not found' }), { status: 404 });
+    }
+
+    // Foreign key constraint failed (caso ainda exista vínculo)
+    if (code === 'P2003') {
+      return new Response(
+        JSON.stringify({ message: 'Cannot delete job due to related records' }),
+        { status: 409 },
+      );
+    }
+
+    const message = err?.message || 'Internal error';
+    return new Response(JSON.stringify({ message }), { status: 500 });
+  }
 }
