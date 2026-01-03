@@ -1,8 +1,9 @@
 services:
-  api-vagas-nortejs-mysql:
-    # bitnami é uma biblioteca de aplicativos com algumas configurações pré-definidas de segurança e desempenho.
-    image: bitnami/mysql:8.0
-    container_name: api-vagas-nortejs-mysql
+  mysql:
+    image: mysql:8.0
+    container_name: nortejs-mysql
+    # Se cair o container, reinicia ele automaticamente
+    restart: unless-stopped
     ports:
       - "3306:3306"
     environment:
@@ -10,3 +11,14 @@ services:
       - MYSQL_DATABASE=vagas_nortejs
       - MYSQL_USER=usernortejs
       - MYSQL_PASSWORD=passwordnortejs
+    volumes:
+      # volume_name:container_path
+      - mysql-data:/var/lib/mysql
+      - ./docker/mysql/init:/docker-entrypoint-initdb.d
+    # Lê-se assim:
+    # "Docker, tudo que o MySQL salvar em /var/lib/mysql,
+    # guarda isso dentro de um volume chamado mysql_data."
+
+volumes:
+  mysql-data:
+  # "Docker, cria (ou reutiliza) um volume com esse nome."

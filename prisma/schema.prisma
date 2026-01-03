@@ -1,0 +1,44 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider   = "prisma-client"
+  output     = "./generated"
+  engineType = "client"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+model Job {
+  id              Int      @id @default(autoincrement()) @map("id_job")
+  // por padrão o Prisma cria colunas do tipo String como VARCHAR(191)
+  title           String   @map("title_job") @db.VarChar(50)
+  description     String   @map("description_job") @db.VarChar(255)
+  company         String   @map("company_job") @db.VarChar(100)
+  company_website String   @map("company_website_job") @db.VarChar(100)
+  city            String   @map("city_job") @db.VarChar(100)
+  state           String   @map("state_job") @db.VarChar(100)
+  schedule        String   @map("schedule_job") @db.VarChar(20)
+  salary          Int      @map("salary_job")
+  requirements    String   @map("requirements_job") @db.VarChar(255)
+  created_at      DateTime @default(now()) @map("created_at_job")
+  updated_at      DateTime @updatedAt @map("updated_at_job")
+
+  comments Comment[]
+}
+
+model Comment {
+  id         Int      @id @default(autoincrement()) @map("id_comment")
+  jobId      Int      @map("job_id_comment")
+  author     String   @map("author_commment") @db.VarChar(100)
+  content    String   @map("content_comment") @db.VarChar(255)
+  created_at DateTime @default(now()) @map("created_at_comment")
+  updated_at DateTime @updatedAt @map("updated_at_comment")
+
+  job Job @relation(fields: [jobId], references: [id])
+}
