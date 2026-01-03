@@ -3,6 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import LogoSvgComponent from '../logo';
+import { cn } from '@/lib/utils';
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -18,7 +19,12 @@ export default function Navbar() {
 
       <ul className="flex items-center space-x-4">
         <li>
-          <Link href="/" className={`hover:font-medium ease-in-out duration-300  ${isActive('/') ? 'font-medium' : ''}`}>Home</Link>
+          <Link href="/" className={cn(
+            "hover:font-medium ease-in-out duration-300",
+            isActive('/') && 'font-medium')
+            }>
+            Home
+          </Link>
           {isActive('/') && <div className="border-b-[3px] border-blue-400/90 rounded-2xl" />}
         </li>
 
@@ -37,6 +43,6 @@ export default function Navbar() {
           {isActive('/cadastrar-vagas') && <div className="border-b-[3px] border-blue-400/90 rounded-2xl" />}
         </li>
       </ul>
-    </nav>
+    </nav >
   )
 }

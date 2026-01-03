@@ -17,14 +17,14 @@ export default function Footer() {
           <p className="text-white max-w-md">Nós conectamos candidatos a empregos ideais, oferecendo funcionalidades intuitivas para busca e gerenciamento de vagas.</p>
         </div>
 
-        <div className="flex space-x-4 items-center">
-          <Link className="text-white" href="https://github.com/your-repo-link" target="_blank" >
+        <div className="flex space-x-4 items-center ">
+          <Link className="text-white hover:scale-115 ease-in-out duration-300 " href="https://github.com/your-repo-link" target="_blank" >
             <Github />
           </Link>
-          <Link className="text-white" href="https://github.com/your-repo-link" target="_blank" >
+          <Link className="text-white hover:scale-115 ease-in-out duration-300 " href="https://github.com/your-repo-link" target="_blank" >
             <Linkedin />
           </Link>
-          <Link className="text-white" href="https://github.com/your-repo-link" target="_blank" >
+          <Link className="text-white hover:scale-115 ease-in-out duration-300" href="https://github.com/your-repo-link" target="_blank" >
             <Instagram/>
           </Link>
         </div>
