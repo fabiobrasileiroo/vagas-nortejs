@@ -3,9 +3,10 @@ import prisma from '@/lib/db';
 // /api/job-board/[id]/comments/route.ts
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
-  const jobId = Number(params.id);
+  const { id } = await context.params;
+  const jobId = Number(id);
 
   const comments = await prisma.comment.findMany({
     where: { jobId },
@@ -17,9 +18,10 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
-  const jobId = Number(params.id);
+  const { id } = await context.params;
+  const jobId = Number(id);
   const { author, content } = await request.json();
 
   const newComment = await prisma.comment.create({

@@ -1,14 +1,11 @@
 import { NextResponse, NextRequest } from 'next/server';
 import prisma from '@/lib/db';
 
-type MaybePromise<T> = T | Promise<T>;
-
 export async function GET(
   _request: NextRequest,
-  { params }: { params: MaybePromise<{ id: string }> }
+  context: { params: Promise<{ id: string }> }
 ) {
-  const resolvedParams = await Promise.resolve(params);
-  const id = resolvedParams?.id;
+  const { id } = await context.params;
   if (!id) {
     return NextResponse.json({ message: 'Missing job id' }, { status: 400 });
   }

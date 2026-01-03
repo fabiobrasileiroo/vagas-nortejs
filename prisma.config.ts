@@ -11,6 +11,7 @@ export default defineConfig({
   },
   datasource: {
     url: process.env["DATABASE_URL"],
+    // Ela se refere a uma URL de conexão de banco de dados separada e temporária que é usada exclusivamente para gerenciar as alterações (migrações) no esquema do seu banco de dados principal.
     shadowDatabaseUrl: process.env["SHADOW_DATABASE_URL"],
   },
 });

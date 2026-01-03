@@ -1,11 +1,9 @@
 import prisma from "@/lib/db";
 import { JobParams } from "../schema-jobs";
 
-type MaybePromise<T> = T | Promise<T>;
-
-export async function GET(request: Request, { params }: { params: MaybePromise<JobParams> }) {
-  const resolvedParams = await Promise.resolve(params);
-  if (!resolvedParams || !resolvedParams.id) {
+export async function GET(request: Request, context: { params: Promise<JobParams> }) {
+  const resolvedParams = await context.params;
+  if (!resolvedParams?.id) {
     return new Response(JSON.stringify({ message: 'Missing job id' }), { status: 400 });
   }
   const jobId = Number(resolvedParams.id);
@@ -22,9 +20,9 @@ export async function GET(request: Request, { params }: { params: MaybePromise<J
   return new Response(JSON.stringify({ data: job }), { status: 200 });
 }
 
-export async function DELETE(request: Request, { params }: { params: MaybePromise<JobParams> }) {
-  const resolvedParams = await Promise.resolve(params);
-  if (!resolvedParams || !resolvedParams.id) {
+export async function DELETE(request: Request, context: { params: Promise<JobParams> }) {
+  const resolvedParams = await context.params;
+  if (!resolvedParams?.id) {
     return new Response(JSON.stringify({ message: 'Missing job id' }), { status: 400 });
   }
   const jobId = Number(resolvedParams.id);
