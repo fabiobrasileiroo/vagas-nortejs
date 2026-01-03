@@ -1,10 +1,11 @@
+import { NextResponse } from 'next/server';
 import prisma from "@/lib/db";
 import { JobParams } from "../schema-jobs";
 
 export async function GET(request: Request, context: { params: Promise<JobParams> }) {
   const resolvedParams = await context.params;
   if (!resolvedParams?.id) {
-    return new Response(JSON.stringify({ message: 'Missing job id' }), { status: 400 });
+    return NextResponse.json({ message: 'Missing job id' }, { status: 400 });
   }
   const jobId = Number(resolvedParams.id);
 
@@ -14,23 +15,23 @@ export async function GET(request: Request, context: { params: Promise<JobParams
   });
 
   if (!job) {
-    return new Response(JSON.stringify({ message: 'Job not found' }), { status: 404 });
+    return NextResponse.json({ message: 'Job not found' }, { status: 404 });
   }
 
-  return new Response(JSON.stringify({ data: job }), { status: 200 });
+  return NextResponse.json({ data: job }, { status: 200 });
 }
 
 export async function DELETE(request: Request, context: { params: Promise<JobParams> }) {
   const resolvedParams = await context.params;
   if (!resolvedParams?.id) {
-    return new Response(JSON.stringify({ message: 'Missing job id' }), { status: 400 });
+    return NextResponse.json({ message: 'Missing job id' }, { status: 400 });
   }
   const jobId = Number(resolvedParams.id);
 
   try {
     const existing = await prisma.job.findUnique({ where: { id: jobId } });
     if (!existing) {
-      return new Response(JSON.stringify({ message: 'Job not found' }), { status: 404 });
+      return NextResponse.json({ message: 'Job not found' }, { status: 404 });
     }
 
     // Evita erro de FK quando existem comentários (MySQL tende a RESTRICT por padrão)
@@ -46,18 +47,18 @@ export async function DELETE(request: Request, context: { params: Promise<JobPar
 
     // Record to delete does not exist (race condition)
     if (code === 'P2025') {
-      return new Response(JSON.stringify({ message: 'Job not found' }), { status: 404 });
+      return NextResponse.json({ message: 'Job not found' }, { status: 404 });
     }
 
     // Foreign key constraint failed (caso ainda exista vínculo)
     if (code === 'P2003') {
-      return new Response(
-        JSON.stringify({ message: 'Cannot delete job due to related records' }),
+      return NextResponse.json(
+        { message: 'Cannot delete job due to related records' },
         { status: 409 },
       );
     }
 
     const message = err?.message || 'Internal error';
-    return new Response(JSON.stringify({ message }), { status: 500 });
+    return NextResponse.json({ message }, { status: 500 });
   }
 }
